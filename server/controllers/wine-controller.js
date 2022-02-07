@@ -1,4 +1,5 @@
-const Wine = require('../models/wine-model')
+const Wine = require('../models/wine-model');
+const { getVivinoWine } = require('../services/vivino_scraper');
 
 createWine = (req, res) => {
     const body = req.body
@@ -11,6 +12,43 @@ createWine = (req, res) => {
     }
 
     const wine = new Wine(body)
+
+    if (!wine) {
+        return res.status(400).json({ success: false, error: err })
+    }
+
+    wine
+        .save()
+        .then(() => {
+            return res.status(201).json({
+                success: true,
+                id: wine._id,
+                message: 'Wine created!',
+            })
+        })
+        .catch(error => {
+            return res.status(400).json({
+                error,
+                message: 'Wine not created!',
+            })
+        })
+}
+
+addVivinoWine = async (req, res) => {
+
+    if (!req.body) {
+        return res.status(400).json({
+            success: false,
+            error: 'You must provide a Vivino URL',
+        })
+    }
+
+    const url = req.body.url
+    console.log(url)
+
+    const body = await getVivinoWine(url);
+    const wine = new Wine(body);
+    console.log(wine);
 
     if (!wine) {
         return res.status(400).json({ success: false, error: err })
@@ -130,6 +168,7 @@ getAllWines = async (req, res) => {
 
 module.exports = {
     createWine,
+    addVivinoWine,
     updateWine,
     deleteWine,
     getAllWines,

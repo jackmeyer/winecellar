@@ -5,6 +5,7 @@ const api = axios.create({
 })
 
 export const insertWine = payload => api.post(`/wine`, payload)
+export const addVivinoWine = payload => api.post('/addvivinowine', payload)
 export const getAllWines = () => api.get(`/wines`)
 export const updateWineById = (id, payload) => api.put(`/wine/${id}`, payload)
 export const deleteWineById = id => api.delete(`/wine/${id}`)
@@ -12,6 +13,7 @@ export const getWineById = id => api.get(`/wine/${id}`)
 
 const apis = {
     insertWine,
+    addVivinoWine,
     getAllWines,
     updateWineById,
     deleteWineById,
