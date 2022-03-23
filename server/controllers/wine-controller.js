@@ -1,7 +1,7 @@
 const Wine = require('../models/wine-model');
 const { getVivinoWine } = require('../services/vivino_scraper');
 
-createWine = (req, res) => {
+createWine = async (req, res) => {
     const body = req.body
 
     if (!body) {
@@ -17,7 +17,7 @@ createWine = (req, res) => {
         return res.status(400).json({ success: false, error: err })
     }
 
-    wine
+    await wine
         .save()
         .then(() => {
             return res.status(201).json({
@@ -54,7 +54,7 @@ addVivinoWine = async (req, res) => {
         return res.status(400).json({ success: false, error: err })
     }
 
-    wine
+    await wine
         .save()
         .then(() => {
             return res.status(201).json({
@@ -81,7 +81,7 @@ updateWine = async (req, res) => {
         })
     }
 
-    Wine.findOne({ _id: req.params.id }, (err, wine) => {
+    await Wine.findOne({ _id: req.params.id }, (err, wine) => {
         if (err) {
             return res.status(404).json({
                 err,
@@ -163,7 +163,7 @@ getAllWines = async (req, res) => {
                 .json({ success: false, error: `Wine not found` })
         }
         return res.status(200).json({ success: true, data: wines })
-    }).catch(err => console.log(err))
+    }).clone().catch(err => console.log(err))
 }
 
 module.exports = {

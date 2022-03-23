@@ -1,4 +1,6 @@
 import React from 'react';
+import api from '../api'
+
 import { Row, Col, Button, Form, Modal } from 'react-bootstrap';
 
 class WineInsertModal extends React.Component {
@@ -38,8 +40,28 @@ class WineInsertModal extends React.Component {
 	
 	handleSubmit = async (e) => {
 		e.preventDefault();
-		await this.props.newWineHandler(this.state.winery, this.state.wine_name, this.state.vintage, this.state.region, this.state.country, this.state.vivino_rating, this.state.user_rating, this.state.comments, this.state.price, this.state.alcohol_content, this.state.grapes, this.state.wine_style, this.state.inventory_count);
+
+		const { winery, wine_name, vintage, region, country, user_rating, comments, price, alcohol_content, inventory_count, grapes, wine_style } = this.state
+        const payload = { winery, wine_name, vintage, region, country, user_rating, comments, price, alcohol_content, inventory_count, grapes, wine_style }
+
+		await api.insertWine(payload).then(res => {
+            window.alert(`Wine added successfully!`)
+            this.setState({
+                winery: '',
+                wine_name: '',
+                vintage: '',
+                region: '',
+                country: '',
+                user_rating: '',
+                comments: '',
+                price: '',
+                alcohol_content: '',
+                inventory_count: ''
+            })
+        })
+		this.props.handleModalClose();
 		this.setState({winery: null, wine_name: null, vintage: null, region: null, country: null, vivino_rating: null, user_rating: null, comments: null, price: null, alcohol_content: null, grapes: null, wine_style: null, inventory_count: null});
+		
 	}
 	
 	render() {
@@ -71,13 +93,13 @@ class WineInsertModal extends React.Component {
 					<Form.Group as={Row} >
 						<Form.Label column sm='4'>Region:</Form.Label>
 						<Col sm='8'>
-						<Form.Control value={this.state.region} onChange={this.handleRegionChange} required />
+						<Form.Control value={this.state.region} onChange={this.handleRegionChange} />
 						</Col>
 					</Form.Group>
 					<Form.Group as={Row} >
 						<Form.Label column sm='4'>Country:</Form.Label>
 						<Col sm='8'>
-						<Form.Control value={this.state.country} onChange={this.handleCountryChange} required />
+						<Form.Control value={this.state.country} onChange={this.handleCountryChange} />
 						</Col>
 					</Form.Group>
 					<Form.Group as={Row} >
@@ -95,7 +117,7 @@ class WineInsertModal extends React.Component {
 					<Form.Group as={Row} >
 						<Form.Label column sm='4'>Comments:</Form.Label>
 						<Col sm='8'>
-						<Form.Control value={this.state.comments} onChange={this.handleCommentsChange} required />
+						<Form.Control value={this.state.comments} onChange={this.handleCommentsChange} />
 						</Col>
 					</Form.Group>
 					<Form.Group as={Row} >

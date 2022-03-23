@@ -1,6 +1,7 @@
 import React, { Component } from 'react'
 import { Link } from 'react-router-dom'
 import styled from 'styled-components'
+import { Button } from 'react-bootstrap'
 
 const Collapse = styled.div.attrs({
     className: 'collpase navbar-collapse',
@@ -26,11 +27,6 @@ class Links extends Component {
                         <Item>
                             <Link to="/wine/list" className="nav-link">
                                 Cellar List
-                            </Link>
-                        </Item>
-                        <Item>
-                            <Link to="/wine/create" className="nav-link">
-                                Add Wine
                             </Link>
                         </Item>
                     </List>

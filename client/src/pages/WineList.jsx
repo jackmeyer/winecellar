@@ -1,13 +1,16 @@
 import React, { Component } from 'react'
 import ReactTable from 'react-table-6'
 import api from '../api'
+import {WineInsertModal} from '../components';
 //import BootstrapTable from 'react-bootstrap-table-next';
 //import ToolkitProvider, { Search } from 'react-bootstrap-table2-toolkit';
-//import { Row, Col, Container, Modal, Button } from 'react-bootstrap';
+import { Row, Col, Container, Modal, Button, Form } from 'react-bootstrap';
 
 import styled from 'styled-components'
 
 import 'react-table-6/react-table.css'
+import '../styles/styles.css';
+
 
 const Wrapper = styled.div`
     padding: 0 40px 40px 40px;
@@ -61,6 +64,7 @@ class WineList extends Component {
             wines: [],
             columns: [],
             isLoading: false,
+            showModal: false,
         }
     }
 
@@ -74,6 +78,45 @@ class WineList extends Component {
             })
         })
     }
+
+    handleModalClose = () => {
+        this.setState({showModal: false});
+        window.location.reload()
+    }
+
+    newWineHandler = async () => {
+        const { winery, wine_name, vintage, region, country, user_rating, comments, price, alcohol_content, inventory_count } = this.state
+        const payload = { winery, wine_name, vintage, region, country, user_rating, comments, price, alcohol_content, inventory_count }
+
+        await api.insertWine(payload).then(res => {
+            window.alert(`Wine added successfully`)
+            this.setState({
+                winery: '',
+                wine_name: '',
+                vintage: '',
+                region: '',
+                country: '',
+                user_rating: '',
+                comments: '',
+                price: '',
+                alcohol_content: '',
+                inventory_count: ''
+            })
+        })
+    }
+
+    submit = async (e) => {
+        e.preventDefault()
+        const formData = new FormData(e.target),
+              formDataObj = Object.fromEntries(formData.entries())
+
+        var vivinoUrl = formDataObj.url;
+        console.log(vivinoUrl)
+
+        await api.addVivinoWine(formDataObj).then(res => {
+            window.alert(res.data);
+        })
+      }
 
     render() {
         const { wines, isLoading } = this.state
@@ -134,17 +177,6 @@ class WineList extends Component {
                         </span>
                     )
                 },
-            },
-            {
-                Header: '',
-                accessor: '',
-                Cell: function(props) {
-                    return (
-                        <span>
-                            <UpdateWine id={props.original._id} />
-                        </span>
-                    )
-                },
             }
         ]
 
@@ -155,6 +187,28 @@ class WineList extends Component {
 
         return (
             <Wrapper>
+                <WineInsertModal showModal={this.state.showModal} handleModalClose={this.handleModalClose} />
+                <Button  onClick={() => this.setState({showModal: true, modalTitle: 'Add Wine: '})}>Manually Add</Button>
+                <Form onSubmit={this.submit}>
+                    <Row className="align-items-center">
+                        <Col xs="auto">
+                        <Form.Label htmlFor="inlineFormInput" visuallyHidden>
+                            Vivino URL
+                        </Form.Label>
+                        <Form.Control
+                            className="mb-2"
+                            id="vivinoUrl"
+                            name="url"
+                            placeholder="Add from Vivino URL"
+                        />
+                        </Col>
+                        <Col xs="auto">
+                        <Button type="submit" className="mb-2">
+                            Submit
+                        </Button>
+                        </Col>
+                    </Row>
+                    </Form>
                 {showTable && (
                     <ReactTable
                         data={wines}
